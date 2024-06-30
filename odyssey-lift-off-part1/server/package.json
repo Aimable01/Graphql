@@ -19,6 +19,8 @@
   "private": true,
   "dependencies": {
     "@apollo/server": "^4.10.4",
+    "@graphql-tools/mock": "^9.0.3",
+    "@graphql-tools/schema": "^10.0.4",
     "graphql": "^16.8.1",
     "graphql-tag": "^2.12.6"
   }
