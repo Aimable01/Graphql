@@ -30,6 +30,26 @@ const resolvers = {
       return _db.authors.find((auth) => auth.id === args.id);
     },
   },
+
+  // relations
+  Game: {
+    reviews(parent) {
+      return _db.reviews.filter((rev) => rev.game_id === parent.id);
+    },
+  },
+  Author: {
+    reviews(parent) {
+      return _db.reviews.filter((rev) => rev.author_id === parent.id);
+    },
+  },
+  Review: {
+    author(parent) {
+      return _db.authors.find((auth) => auth.id === parent.author_id);
+    },
+    game(parent) {
+      return _db.games.find((game) => game.id === parent.game_id);
+    },
+  },
 };
 
 // server setup
