@@ -8,6 +8,7 @@ import { typeDefs } from "./schema.js";
 
 const resolvers = {
   Query: {
+    // all items
     games() {
       return _db.games;
     },
@@ -16,6 +17,17 @@ const resolvers = {
     },
     authors() {
       return _db.authors;
+    },
+
+    // single item
+    review(_, args) {
+      return _db.reviews.find((rev) => rev.id === args.id);
+    },
+    game(_, args) {
+      return _db.games.find((game) => game.id === args.id);
+    },
+    author(_, args) {
+      return _db.authors.find((auth) => auth.id === args.id);
     },
   },
 };
