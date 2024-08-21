@@ -42,6 +42,15 @@ const CREATE_USER_MUTATION = gql`
   }
 `;
 
+const UPDATE_USERNAME_MUTATION = gql`
+  mutation UpdateUsername($input: UpdateUsernameInput!) {
+    updateUsername(input: $input) {
+      id
+      username
+    }
+  }
+`;
+
 export default function DisplayData() {
   const [movieSearch, setMovieSearch] = useState("");
 
@@ -51,6 +60,11 @@ export default function DisplayData() {
   const [username, setUsername] = useState("");
   const [nationality, setNationality] = useState("");
   const [createUser] = useMutation(CREATE_USER_MUTATION);
+
+  // update user states
+  const [updatedUsername, setUpdatedUsername] = useState("");
+  const [id, setId] = useState(0);
+  const [updateUsername] = useMutation(UPDATE_USERNAME_MUTATION);
 
   const { data, loading, error, refetch } = useQuery(QUERY_ALL_USERS);
   const { data: MovieData } = useQuery(QUERY_ALL_MOVIES);
@@ -72,7 +86,7 @@ export default function DisplayData() {
             <div key={user.id}>
               <p>Name: {user.name}</p>
               <p>Age: {user.age}</p>
-              <p>username: {user.username}</p>
+              <p>Username: {user.username}</p>
             </div>
           ))}
       </div>
@@ -114,7 +128,7 @@ export default function DisplayData() {
         </div>
       </div>
 
-      <h1>Create user</h1>
+      <h1>Create User</h1>
       <div>
         <button
           onClick={() => {
@@ -124,7 +138,7 @@ export default function DisplayData() {
             refetch();
           }}
         >
-          Create user
+          Create User
         </button>
         <input
           type="text"
@@ -146,6 +160,35 @@ export default function DisplayData() {
           placeholder="nationality..."
           onChange={(e) => setNationality(e.target.value.toUpperCase())}
         />
+      </div>
+
+      <h1>Update Username</h1>
+      <div>
+        <input
+          type="number"
+          placeholder="User ID..."
+          onChange={(e) => setId(Number(e.target.value))}
+        />
+        <input
+          type="text"
+          placeholder="New Username..."
+          onChange={(e) => setUpdatedUsername(e.target.value)}
+        />
+        <button
+          onClick={() => {
+            updateUsername({
+              variables: {
+                input: {
+                  id: id,
+                  newUsername: updatedUsername,
+                },
+              },
+            });
+            refetch();
+          }}
+        >
+          Update Username
+        </button>
       </div>
     </div>
   );
