@@ -51,6 +51,15 @@ const UPDATE_USERNAME_MUTATION = gql`
   }
 `;
 
+const DELETE_USER_MUTATION = gql`
+  mutation DeleteUser($deleteUserId: ID!) {
+    deleteUser(id: $deleteUserId) {
+      name
+      id
+    }
+  }
+`;
+
 export default function DisplayData() {
   const [movieSearch, setMovieSearch] = useState("");
 
@@ -65,6 +74,10 @@ export default function DisplayData() {
   const [updatedUsername, setUpdatedUsername] = useState("");
   const [id, setId] = useState(0);
   const [updateUsername] = useMutation(UPDATE_USERNAME_MUTATION);
+
+  // delete user states
+  const [deleteid, setDeleteid] = useState(0);
+  const [deleteUser] = useMutation(DELETE_USER_MUTATION);
 
   const { data, loading, error, refetch } = useQuery(QUERY_ALL_USERS);
   const { data: MovieData } = useQuery(QUERY_ALL_MOVIES);
@@ -188,6 +201,22 @@ export default function DisplayData() {
           }}
         >
           Update Username
+        </button>
+      </div>
+
+      <h1>Delete user</h1>
+      <div>
+        <input
+          type="number"
+          onChange={(e) => setDeleteid(Number(e.target.value))}
+        />
+        <button
+          onClick={() => {
+            deleteUser({ variables: { deleteUserId: deleteid } });
+            refetch();
+          }}
+        >
+          Delte
         </button>
       </div>
     </div>
