@@ -1,4 +1,4 @@
-import { gql, useQuery, useLazyQuery } from "@apollo/client";
+import { gql, useQuery, useLazyQuery, useMutation } from "@apollo/client";
 import { useState } from "react";
 
 const QUERY_ALL_USERS = gql`
@@ -31,10 +31,28 @@ const GET_MOVIE_BY_NAME = gql`
   }
 `;
 
+const CREATE_USER_MUTATION = gql`
+  mutation CreateUser($input: CreateUserInput!) {
+    createUser(input: $input) {
+      id
+      name
+      age
+      nationality
+    }
+  }
+`;
+
 export default function DisplayData() {
   const [movieSearch, setMovieSearch] = useState("");
 
-  const { data, loading, error } = useQuery(QUERY_ALL_USERS);
+  // create user states
+  const [name, setName] = useState("");
+  const [age, setAge] = useState(0);
+  const [username, setUsername] = useState("");
+  const [nationality, setNationality] = useState("");
+  const [createUser] = useMutation(CREATE_USER_MUTATION);
+
+  const { data, loading, error, refetch } = useQuery(QUERY_ALL_USERS);
   const { data: MovieData } = useQuery(QUERY_ALL_MOVIES);
   const [fetchMovie, { data: movieSearchedData, error: movieError }] =
     useLazyQuery(GET_MOVIE_BY_NAME);
@@ -94,6 +112,40 @@ export default function DisplayData() {
           )}
           {movieError && <h1>There was an error fetching the data</h1>}
         </div>
+      </div>
+
+      <h1>Create user</h1>
+      <div>
+        <button
+          onClick={() => {
+            createUser({
+              variables: { input: { name, username, age, nationality } },
+            });
+            refetch();
+          }}
+        >
+          Create user
+        </button>
+        <input
+          type="text"
+          placeholder="name..."
+          onChange={(e) => setName(e.target.value)}
+        />
+        <input
+          type="number"
+          placeholder="age..."
+          onChange={(e) => setAge(Number(e.target.value))}
+        />
+        <input
+          type="text"
+          placeholder="username..."
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="nationality..."
+          onChange={(e) => setNationality(e.target.value.toUpperCase())}
+        />
       </div>
     </div>
   );
