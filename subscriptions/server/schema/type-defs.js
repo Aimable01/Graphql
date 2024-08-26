@@ -31,6 +31,11 @@ const typeDefs = gql`
     signup(input: UserSignupInput!): AuthPayload
     login(input: UserSigninInput!): AuthPayload
   }
+
+  ## subscriptions
+  type Message {
+    id: ID!
+  }
 `;
 
 module.exports = typeDefs;
