@@ -11,21 +11,26 @@ const typeDefs = gql`
     user: User
   }
 
-  type UserSignupInput {
+  type AuthPayload {
+    token: String!
+    user: User!
+  }
+
+  input UserSignupInput {
     username: String!
     email: String!
     password: String!
   }
 
-  type UserSigninInput {
+  input UserSigninInput {
     email: String!
     password: String!
   }
 
   type Mutation {
-    signup(input: UserInput!): String!
-    login(input: UserSigninInput!): String!
+    signup(input: UserSignupInput!): AuthPayload
+    login(input: UserSigninInput!): AuthPayload
   }
 `;
 
-module.exports = { typeDefs };
+module.exports = typeDefs;

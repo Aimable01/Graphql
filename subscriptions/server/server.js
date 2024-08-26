@@ -1,6 +1,21 @@
+const jwt = require("jsonwebtoken");
 const { ApolloServer } = require("apollo-server");
+const typeDefs = require("./schema/type-defs");
+const resolvers = require("./schema/resolvers");
 
-const server = new ApolloServer({});
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: ({ req }) => {
+    const token = req.headers.authorization || "";
+    try {
+      const user = jwt.verify(token, "secret-word");
+      return { user };
+    } catch (error) {
+      return {};
+    }
+  },
+});
 
 server
   .listen()
