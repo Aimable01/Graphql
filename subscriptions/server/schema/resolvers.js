@@ -1,9 +1,9 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 const users = [];
 
-const resolvers = {
+export const resolvers = {
   Query: {
     user: (parent, args, context) => {
       if (!context.user) throw new Error(`No user authenticated`);
@@ -23,7 +23,11 @@ const resolvers = {
 
       users.push(user);
 
-      const token = jwt.sign({ id: user.id, email: user.email }, "secret-word");
+      const token = jwt.sign(
+        { id: user.id, email: user.email },
+        "secret-word",
+        { expiresIn: "1h" }
+      );
 
       return { token, user };
     },
@@ -35,10 +39,12 @@ const resolvers = {
       const isValid = await bcrypt.compare(password, user.password);
       if (!isValid) throw new Error("Invalid password");
 
-      const token = jwt.sign({ id: user.id, email: user.email }, "secret-word");
+      const token = jwt.sign(
+        { id: user.id, email: user.email },
+        "secret-word",
+        { expiresIn: "1h" }
+      );
       return { token, user };
     },
   },
 };
-
-module.exports = resolvers;

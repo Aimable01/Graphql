@@ -1,6 +1,6 @@
-const { gql } = require("apollo-server");
+import { gql } from "apollo-server";
 
-const typeDefs = gql`
+export const typeDefs = gql`
   type User {
     id: ID!
     username: String!
@@ -9,8 +9,6 @@ const typeDefs = gql`
 
   type Query {
     user: User
-    rooms: [Room!]!
-    messages(room: String!): [Message!]!
   }
 
   type AuthPayload {
@@ -34,5 +32,3 @@ const typeDefs = gql`
     login(input: UserSigninInput!): AuthPayload
   }
 `;
-
-module.exports = typeDefs;
