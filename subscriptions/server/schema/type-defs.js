@@ -18,18 +18,6 @@ const typeDefs = gql`
     user: User!
   }
 
-  ## subscriptions
-  type Message {
-    id: ID!
-    content: String!
-    sender: String!
-    room: String!
-  }
-
-  type Room {
-    name: String!
-  }
-
   input UserSignupInput {
     username: String!
     email: String!
@@ -41,21 +29,9 @@ const typeDefs = gql`
     password: String!
   }
 
-  input MessageInput {
-    content: String!
-    sender: String!
-    room: String!
-  }
-
   type Mutation {
     signup(input: UserSignupInput!): AuthPayload
     login(input: UserSigninInput!): AuthPayload
-    sendMessage(input: MessageInput!): Message!
-    createRoom(name: String!): Room!
-  }
-
-  type Subscription {
-    messageSent(room: String!): Message!
   }
 `;
 

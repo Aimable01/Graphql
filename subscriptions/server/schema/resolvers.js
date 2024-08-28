@@ -1,14 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const { PubSub } = require("apollo-server");
-const { subscribe } = require("graphql");
-
 const users = [];
-const rooms = [];
-const messages = [];
-
-const pubSub = new PubSub();
 
 const resolvers = {
   Query: {
@@ -16,8 +9,6 @@ const resolvers = {
       if (!context.user) throw new Error(`No user authenticated`);
       return users.find((u) => u.id === context.user.id);
     },
-    rooms: () => rooms,
-    messages: (_, { room }) => messages.filter((m) => m.room === room),
   },
   Mutation: {
     signup: async (parent, args) => {
@@ -46,25 +37,6 @@ const resolvers = {
 
       const token = jwt.sign({ id: user.id, email: user.email }, "secret-word");
       return { token, user };
-    },
-    sendMessage: (_, args) => {
-      const { content, sender, room } = args.input;
-      const message = { id: Date.now().toString(), content, sender, room };
-      messages.push(message);
-      pubSub.publish(`Message_sent_${room}`, { messageSent: message });
-      return message;
-    },
-    createRoom: (_, { name }) => {
-      const room = { name };
-      rooms.push(room);
-      return room;
-    },
-  },
-  Subscription: {
-    messageSent: {
-      subscribe: (_, { room }) => {
-        pubSub.asyncIterator([`Message_sent_${room}`]);
-      },
     },
   },
 };
