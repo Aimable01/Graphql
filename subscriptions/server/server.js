@@ -7,6 +7,8 @@ import { makeExecutableSchema } from "@graphql-tools/schema";
 import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/lib/use/ws";
 import cors from "cors";
+import bodyParser from "body-parser";
+
 import { resolvers } from "./schema/resolvers.js";
 import { typeDefs } from "./schema/type-defs.js";
 
@@ -17,7 +19,7 @@ const httpServer = createServer(app);
 
 const wsServer = new WebSocketServer({
   server: httpServer,
-  path: "/subscriptions",
+  path: "/graphql",
 });
 
 const serverCleanup = useServer({ schema }, wsServer);
@@ -43,7 +45,13 @@ const server = new ApolloServer({
 });
 
 await server.start();
-app.use("/graphql", cors(), express.json(), expressMiddleware(server));
+app.use(
+  "/graphql",
+  cors(),
+  express.json(),
+  bodyParser.json(),
+  expressMiddleware(server)
+);
 
 const PORT = 4000;
 
@@ -51,5 +59,6 @@ httpServer.listen(PORT, () => {
   console.log(`
       🚀🚀 Server is up and running
       💻💻 Live on: http://localhost:${PORT}/graphql
+      💻💻 Subscription on:  ws://localhost:${PORT}/graphql
     `);
 });

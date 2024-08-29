@@ -1,13 +1,26 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { PubSub } from "graphql-subscriptions";
+import { subscribe } from "graphql";
 
 const users = [];
+let currentNumber = 0;
+
+const pubSub = new PubSub();
 
 export const resolvers = {
   Query: {
     user: (parent, args, context) => {
       if (!context.user) throw new Error(`No user authenticated`);
       return users.find((u) => u.id === context.user.id);
+    },
+    currentNumber() {
+      return currentNumber;
+    },
+  },
+  Subscription: {
+    numberIncremented: {
+      subscribe: () => pubSub.asyncIterator("NUMBER_INCREMENTED"),
     },
   },
   Mutation: {
@@ -48,3 +61,12 @@ export const resolvers = {
     },
   },
 };
+
+// ----- increment number function
+function incrementNumber() {
+  currentNumber += 1;
+  pubSub.publish("NUMBER_INCREMENTED", { numberIncremented: currentNumber });
+  setTimeout(incrementNumber, 10000);
+}
+
+incrementNumber();

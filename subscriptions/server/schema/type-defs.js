@@ -9,6 +9,12 @@ export const typeDefs = gql`
 
   type Query {
     user: User
+    currentNumber: Int
+  }
+
+  # a simple subscription
+  type Subscription {
+    numberIncremented: Int
   }
 
   type AuthPayload {
